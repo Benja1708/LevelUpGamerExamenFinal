@@ -10,10 +10,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 
 class ProductoViewModel(application: Application) : AndroidViewModel(application) {
 
-    // 👇 este es el MISMO que ya tenía tu proyecto original
+    // usa la misma DB que ya tenía tu proyecto
     private val db = Room.databaseBuilder(
         application,
         ProductoDatabase::class.java,
@@ -23,46 +24,80 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
     private val _productos = MutableStateFlow<List<Producto>>(emptyList())
     val productos: StateFlow<List<Producto>> = _productos.asStateFlow()
 
-    // para no volver a precargar cada vez que llegue el flow
-    private var yaPrecargo = false
-
     init {
         viewModelScope.launch {
-            db.productoDao().getAllProductos().collect { lista ->
-                _productos.value = lista
+            val dao = db.productoDao()
 
-                // si está vacío la primera vez, metemos 3 productos de ejemplo
-                if (!yaPrecargo && lista.isEmpty()) {
-                    yaPrecargo = true
-                    precargarProductos()
+            // 1. leemos lo que ya hay
+            val actuales = dao.getAllProductos().first()
+
+            // 2. lista de productos que pide la evaluación
+            val examen = listOf(
+                Producto(
+                    nombre = "Catan",
+                    descripcion = "JM001 • Juegos de Mesa • Catan",
+                    precio = 29990.0
+                ),
+                Producto(
+                    nombre = "Carcassonne",
+                    descripcion = "JM002 • Juegos de Mesa • Carcassonne",
+                    precio = 24990.0
+                ),
+                Producto(
+                    nombre = "Controlador Inalámbrico Xbox Series X",
+                    descripcion = "AC001 • Accesorios",
+                    precio = 59990.0
+                ),
+                Producto(
+                    nombre = "Auriculares Gamer HyperX Cloud II",
+                    descripcion = "AC002 • Accesorios",
+                    precio = 79990.0
+                ),
+                Producto(
+                    nombre = "PlayStation 5",
+                    descripcion = "CO001 • Consolas",
+                    precio = 549990.0
+                ),
+                Producto(
+                    nombre = "PC Gamer ASUS ROG Strix",
+                    descripcion = "CG001 • Computadores Gamers",
+                    precio = 1299990.0
+                ),
+                Producto(
+                    nombre = "Silla Gamer Secretlab Titan",
+                    descripcion = "SG001 • Sillas Gamers",
+                    precio = 349990.0
+                ),
+                Producto(
+                    nombre = "Mouse Gamer Logitech G502 HERO",
+                    descripcion = "MS001 • Mouse",
+                    precio = 49990.0
+                ),
+                Producto(
+                    nombre = "Mousepad Razer Goliathus Extended",
+                    descripcion = "MP001 • Mousepad",
+                    precio = 29990.0
+                ),
+                Producto(
+                    nombre = "Polera Gamer Personalizada \"Level-Up\"",
+                    descripcion = "PP001 • Poleras Personalizadas",
+                    precio = 14990.0
+                )
+            )
+
+            // 3. por cada uno del examen, si no está por nombre, lo insertamos
+            val nombresActuales = actuales.map { it.nombre }.toSet()
+            examen.forEach { prod ->
+                if (prod.nombre !in nombresActuales) {
+                    dao.insert(prod)
                 }
             }
-        }
-    }
 
-    private suspend fun precargarProductos() {
-        val dao = db.productoDao()
-        dao.insert(
-            Producto(
-                nombre = "Teclado Gamer RGB",
-                descripcion = "Teclado mecánico retroiluminado",
-                precio = 45990.0
-            )
-        )
-        dao.insert(
-            Producto(
-                nombre = "Mouse Gamer 16000 DPI!",
-                descripcion = "Mouse óptico ultra preciso",
-                precio = 29990.0
-            )
-        )
-        dao.insert(
-            Producto(
-                nombre = "Headset Surround 7.1",
-                descripcion = "Audífonos con micrófono",
-                precio = 34990.0
-            )
-        )
+            // 4. y nos quedamos escuchando los cambios para la pantalla
+            dao.getAllProductos().collect { lista ->
+                _productos.value = lista
+            }
+        }
     }
 
     fun getProducto(id: Int) = db.productoDao().getProductoById(id)
@@ -91,3 +126,4 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
         }
     }
 }
+

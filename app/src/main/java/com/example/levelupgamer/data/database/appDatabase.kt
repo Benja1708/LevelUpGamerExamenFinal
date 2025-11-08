@@ -1,14 +1,23 @@
-package com.example.levelupgamer.data
+package com.example.levelupgamer.data.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.levelupgamer.data.User
+import com.example.levelupgamer.data.UserDao
+import com.example.levelupgamer.data.dao.ProductoDao
+import com.example.levelupgamer.data.model.Producto
 
-@Database(entities = [User::class], version = 1)
+@Database(
+    entities = [User::class, Producto::class],
+    version = 2,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
+    abstract fun productoDao(): ProductoDao
 
     companion object {
         @Volatile
@@ -20,7 +29,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "levelup_db"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

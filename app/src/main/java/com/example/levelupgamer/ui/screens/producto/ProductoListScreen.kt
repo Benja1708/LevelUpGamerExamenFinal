@@ -3,29 +3,11 @@ package com.example.levelupgamer.ui.screens.producto
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -69,29 +51,26 @@ fun ProductoListScreen(
                 }
             }
         }
-    ) {
-        Column(modifier = Modifier.padding(it).fillMaxSize()) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(8.dp)
-            ) {
-                items(productos) { producto ->
-                    ProductoCard(
-                        producto = producto,
-                        navController = navController,
-                        isAdmin = isAdmin,
-                        onEdit = {
-                            navController.navigate("editProducto/${producto.id}")
-                        },
-                        onDelete = {
-                            productoViewModel.eliminarProducto(producto)
-                        },
-                        onAddToCart = {
-                            carritoViewModel.agregarAlCarrito(producto)
-                        }
-                    )
-                }
+    ) { padding ->
+        androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
+            columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(2),
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize(),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(productos.size) { index ->
+                val prod = productos[index]
+                ProductoCard(
+                    producto = prod,
+                    navController = navController,
+                    isAdmin = isAdmin,
+                    onEdit = { navController.navigate("editProducto/${prod.id}") },
+                    onDelete = { productoViewModel.eliminarProducto(prod) },
+                    onAddToCart = { carritoViewModel.agregarAlCarrito(prod) }
+                )
             }
         }
     }
@@ -107,75 +86,103 @@ fun ProductoCard(
     onAddToCart: () -> Unit
 ) {
     Card(
+        shape = RoundedCornerShape(12.dp),
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxWidth()
+            .height(240.dp)              // 👈 mismo alto para todos
             .clickable { navController.navigate("productoDetalle/${producto.id}") },
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF2E2E2E)
+        )
     ) {
-        Column {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // imagen arriba
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
+                painter = painterResource(id = productoImage(producto.nombre)),
                 contentDescription = producto.nombre,
                 modifier = Modifier
-                    .height(120.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .height(110.dp),
                 contentScale = ContentScale.Crop
             )
-            Box(
+
+            // info
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.Black.copy(alpha = 0.5f))
+                    .background(Color(0xFF555555))
                     .padding(8.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Column {
                     Text(
                         text = producto.nombre,
                         color = Color(0xFF39FF14),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 14.sp,
+                        maxLines = 2
                     )
                     Text(
                         text = "$${producto.precio}",
                         color = Color(0xFF39FF14),
-                        fontSize = 14.sp
+                        fontSize = 12.sp
                     )
                 }
-            }
-            if (isAdmin) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(
-                        onClick = onEdit,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
+
+                if (isAdmin) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Editar", color = Color.Black)
+                        Button(
+                            onClick = onEdit,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Editar", color = Color.Black, fontSize = 12.sp)
+                        }
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Button(
+                            onClick = onDelete,
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Eliminar", color = Color.White, fontSize = 12.sp)
+                        }
                     }
-                    Button(
-                        onClick = onDelete,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                    ) {
-                        Text("Eliminar", color = Color.White)
-                    }
-                }
-            } else {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
+                } else {
                     Button(
                         onClick = onAddToCart,
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B5BFF)),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Agregar al carrito")
+                        Text("Agregar al carrito", fontSize = 12.sp)
                     }
                 }
             }
         }
+    }
+}
+
+/**
+ * Mapea el nombre del producto a una imagen local.
+ * Si no encuentra, usa una por defecto.
+ */
+private fun productoImage(nombre: String): Int {
+    return when {
+        nombre.contains("catan", ignoreCase = true) -> R.drawable.catan
+        nombre.contains("carcassonne", ignoreCase = true) -> R.drawable.carcassonne
+        nombre.contains("xbox", ignoreCase = true) -> R.drawable.control_xbox
+        nombre.contains("hyperx", ignoreCase = true) -> R.drawable.audifonos_hyperx
+        nombre.contains("playstation", ignoreCase = true) || nombre.contains("ps5", ignoreCase = true) -> R.drawable.ps5
+        nombre.contains("pc", ignoreCase = true) && nombre.contains("gamer", ignoreCase = true) -> R.drawable.pc_gamer_asus
+        nombre.contains("silla", ignoreCase = true) -> R.drawable.silla_gamer
+        nombre.contains("mousepad", ignoreCase = true) -> R.drawable.mousepad_gamer
+        nombre.contains("mouse", ignoreCase = true) -> R.drawable.mouse_gamer
+        nombre.contains("polera", ignoreCase = true) -> R.drawable.polera_gamer
+        else -> R.drawable.ic_launcher_background   // 👈 fallback
     }
 }

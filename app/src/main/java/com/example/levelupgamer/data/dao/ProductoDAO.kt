@@ -25,4 +25,7 @@ interface ProductoDao {
 
     @Delete
     suspend fun delete(producto: Producto)
+
+    @Query("SELECT * FROM producto")
+    suspend fun getAllProductosOnce(): List<Producto>
 }

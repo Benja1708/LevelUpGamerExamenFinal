@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,12 +63,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")  // Versión actualizada
-    kapt("androidx.room:room-compiler:2.6.1")          // Misma versión
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
     // ZXing QR Code Scanner
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-
+    implementation("com.google.zxing:core:3.5.1")
 }

@@ -4,13 +4,15 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +29,19 @@ import com.example.levelupgamer.viewmodel.CarritoViewModel
 import com.example.levelupgamer.viewmodel.ProductoViewModel
 import com.example.levelupgamer.viewmodel.UserViewModel
 
+// categorías para los filtros
+private val categoriasCaso = listOf(
+    "Todos",
+    "Juegos de Mesa",
+    "Accesorios",
+    "Consolas",
+    "Computadores Gamers",
+    "Sillas Gamers",
+    "Mouse",
+    "Mousepad",
+    "Poleras gamers"
+)
+
 @Composable
 fun ProductoListScreen(
     navController: NavController,
@@ -37,6 +52,15 @@ fun ProductoListScreen(
     val productos by productoViewModel.productos.collectAsState()
     val currentUser by userViewModel.currentUser.collectAsState()
     val isAdmin = currentUser?.correo?.endsWith("@admin.cl") == true
+
+    // filtro seleccionado
+    var categoriaSeleccionada by remember { mutableStateOf("Todos") }
+
+    // aplicar filtro a la lista
+    val productosFiltrados = remember(productos, categoriaSeleccionada) {
+        if (categoriaSeleccionada == "Todos") productos
+        else productos.filter { it.categoria == categoriaSeleccionada }
+    }
 
     Scaffold(
         containerColor = Color(0xFF121212),
@@ -52,25 +76,72 @@ fun ProductoListScreen(
             }
         }
     ) { padding ->
-        androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
-            columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(2),
+
+        Column(
             modifier = Modifier
                 .padding(padding)
-                .fillMaxSize(),
-            contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxSize()
         ) {
-            items(productos.size) { index ->
-                val prod = productos[index]
-                ProductoCard(
-                    producto = prod,
-                    navController = navController,
-                    isAdmin = isAdmin,
-                    onEdit = { navController.navigate("editProducto/${prod.id}") },
-                    onDelete = { productoViewModel.eliminarProducto(prod) },
-                    onAddToCart = { carritoViewModel.agregarAlCarrito(prod) }
-                )
+
+            // --------- FILTROS ARRIBA ---------
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 6.dp, horizontal = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(categoriasCaso.size) { index ->
+                    val cat = categoriasCaso[index]
+                    val seleccionado = cat == categoriaSeleccionada
+                    FilterChip(
+                        selected = seleccionado,
+                        onClick = { categoriaSeleccionada = cat },
+                        label = {
+                            Text(
+                                text = cat,
+                                color = if (seleccionado) Color.Black else Color.White,
+                                fontSize = 12.sp
+                            )
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Color(0xFF39FF14),
+                            containerColor = Color(0xFF2E2E2E)
+                        )
+                    )
+                }
+            }
+
+            if (productosFiltrados.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No hay productos para esta categoría",
+                        color = Color.White
+                    )
+                }
+            } else {
+                // --------- GRID COMO TENÍAS ---------
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(productosFiltrados) { prod ->
+                        ProductoCard(
+                            producto = prod,
+                            navController = navController,
+                            isAdmin = isAdmin,
+                            onEdit = { navController.navigate("editProducto/${prod.id}") },
+                            onDelete = { productoViewModel.eliminarProducto(prod) },
+                            onAddToCart = { carritoViewModel.agregarAlCarrito(prod) }
+                        )
+                    }
+                }
             }
         }
     }
@@ -89,7 +160,7 @@ fun ProductoCard(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(240.dp)              // 👈 mismo alto para todos
+            .height(240.dp)
             .clickable { navController.navigate("productoDetalle/${producto.id}") },
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF2E2E2E)
@@ -98,7 +169,6 @@ fun ProductoCard(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // imagen arriba
             Image(
                 painter = painterResource(id = productoImage(producto.nombre)),
                 contentDescription = producto.nombre,
@@ -108,7 +178,6 @@ fun ProductoCard(
                 contentScale = ContentScale.Crop
             )
 
-            // info
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -167,10 +236,6 @@ fun ProductoCard(
     }
 }
 
-/**
- * Mapea el nombre del producto a una imagen local.
- * Si no encuentra, usa una por defecto.
- */
 private fun productoImage(nombre: String): Int {
     return when {
         nombre.contains("catan", ignoreCase = true) -> R.drawable.catan
@@ -183,6 +248,6 @@ private fun productoImage(nombre: String): Int {
         nombre.contains("mousepad", ignoreCase = true) -> R.drawable.mousepad_gamer
         nombre.contains("mouse", ignoreCase = true) -> R.drawable.mouse_gamer
         nombre.contains("polera", ignoreCase = true) -> R.drawable.polera_gamer
-        else -> R.drawable.ic_launcher_background   // 👈 fallback
+        else -> R.drawable.ic_launcher_background
     }
 }

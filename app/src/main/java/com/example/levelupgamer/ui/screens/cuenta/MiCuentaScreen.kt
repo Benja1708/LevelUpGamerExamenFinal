@@ -86,6 +86,7 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                 .background(Color.Black)
         ) {
             if (currentUser == null) {
+                // sin sesión
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -133,6 +134,7 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
+                    // encabezado
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -173,6 +175,7 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                     }
 
                     if (isEditing) {
+                        // modo edición (dejamos igual que el tuyo)
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -293,6 +296,7 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                             }
                         }
                     } else {
+                        // modo solo lectura
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -304,6 +308,13 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                                 InfoRow("Correo:", user.correo, Color(0xFF1E90FF))
                                 InfoRow("Año de Nacimiento:", user.anioNacimiento.toString(), Color(0xFF39FF14))
                                 InfoRow("Edad:", calcularEdad(user.anioNacimiento).toString() + " años", Color(0xFF1E90FF))
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                // 👇 NUEVO: datos del programa de referidos
+                                InfoRow("Puntos LevelUp:", (user.puntos ?: 0).toString(), Color(0xFF39FF14))
+                                InfoRow("Nivel:", (user.nivel ?: 1).toString(), Color(0xFF39FF14))
+                                InfoRow("Tu código:", user.referralCode ?: "-", Color(0xFF1E90FF))
 
                                 Spacer(modifier = Modifier.height(16.dp))
 

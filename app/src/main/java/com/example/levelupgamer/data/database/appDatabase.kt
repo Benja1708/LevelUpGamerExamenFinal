@@ -11,7 +11,7 @@ import com.example.levelupgamer.data.model.Producto
 
 @Database(
     entities = [User::class, Producto::class],
-    version = 3,
+    version = 4,              // 👈 subimos la versión porque agregamos campos al User
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -30,7 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "levelup_db"
                 )
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration()   // 👈 borra y recrea si cambia versión
                     .build()
                 INSTANCE = instance
                 instance

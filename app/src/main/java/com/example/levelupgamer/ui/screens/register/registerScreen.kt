@@ -6,8 +6,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.levelupgamer.viewmodel.UserViewModel
@@ -19,6 +19,7 @@ fun RegisterScreen(navController: NavController, userViewModel: UserViewModel) {
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var anioNacimiento by remember { mutableStateOf("") }
+    var codigoReferido by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
 
     Column(
@@ -29,7 +30,10 @@ fun RegisterScreen(navController: NavController, userViewModel: UserViewModel) {
     ) {
         Text(
             "Crear cuenta",
-            style = MaterialTheme.typography.titleLarge.copy(color = Color(0xFF39FF14), fontFamily = FontFamily.Default)
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = Color(0xFF39FF14),
+                fontFamily = FontFamily.Default
+            )
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -37,8 +41,8 @@ fun RegisterScreen(navController: NavController, userViewModel: UserViewModel) {
         OutlinedTextField(
             value = nombre,
             onValueChange = { nombre = it },
-            label = { Text("Nombre", color = Color(0xFF39FF14), fontFamily = FontFamily.Default) },
-            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14), fontFamily = FontFamily.Default),
+            label = { Text("Nombre", color = Color(0xFF39FF14)) },
+            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14)),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -47,8 +51,8 @@ fun RegisterScreen(navController: NavController, userViewModel: UserViewModel) {
         OutlinedTextField(
             value = correo,
             onValueChange = { correo = it },
-            label = { Text("Correo", color = Color(0xFF39FF14), fontFamily = FontFamily.Default) },
-            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14), fontFamily = FontFamily.Default),
+            label = { Text("Correo", color = Color(0xFF39FF14)) },
+            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14)),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -57,8 +61,8 @@ fun RegisterScreen(navController: NavController, userViewModel: UserViewModel) {
         OutlinedTextField(
             value = contrasena,
             onValueChange = { contrasena = it },
-            label = { Text("Contraseña", color = Color(0xFF39FF14), fontFamily = FontFamily.Default) },
-            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14), fontFamily = FontFamily.Default),
+            label = { Text("Contraseña", color = Color(0xFF39FF14)) },
+            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14)),
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
@@ -68,8 +72,19 @@ fun RegisterScreen(navController: NavController, userViewModel: UserViewModel) {
         OutlinedTextField(
             value = anioNacimiento,
             onValueChange = { anioNacimiento = it },
-            label = { Text("Año de nacimiento", color = Color(0xFF39FF14), fontFamily = FontFamily.Default) },
-            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14), fontFamily = FontFamily.Default),
+            label = { Text("Año de nacimiento", color = Color(0xFF39FF14)) },
+            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14)),
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 👇 campo opcional
+        OutlinedTextField(
+            value = codigoReferido,
+            onValueChange = { codigoReferido = it },
+            label = { Text("Código de referido (opcional)", color = Color(0xFF39FF14)) },
+            textStyle = LocalTextStyle.current.copy(color = Color(0xFF39FF14)),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -93,7 +108,13 @@ fun RegisterScreen(navController: NavController, userViewModel: UserViewModel) {
                 }
 
                 if (error == null) {
-                    userViewModel.register(nombre, correo, contrasena, anioNacimiento.toInt()) { success, message ->
+                    userViewModel.register(
+                        nombre = nombre,
+                        correo = correo,
+                        contrasena = contrasena,
+                        anioNacimiento = anioNacimiento.toInt(),
+                        codigoReferido = codigoReferido.ifBlank { null }
+                    ) { success, message ->
                         if (success) navController.navigate("login")
                         else error = message
                     }

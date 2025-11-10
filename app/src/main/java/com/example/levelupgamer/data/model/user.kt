@@ -1,5 +1,6 @@
 package com.example.levelupgamer.data
 
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -9,5 +10,8 @@ data class User(
     val nombre: String,
     val correo: String,
     val contrasena: String,
-    val anioNacimiento: Int
+    val anioNacimiento: Int,
+    // 👇 campos nuevos para gamificación
+    val puntos: Int = 0,
+    val referralCode: String = ""
 )

@@ -129,6 +129,12 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                 }
             } else {
                 val user = currentUser!!
+                // puntos puede ser null si todavía no recreaste la BD
+                val puntos = user.puntos ?: 0
+                // nivel calculado: cada 50 pts = +1
+                val nivelCalculado = (puntos / 50) + 1
+                val codigo = user.referralCode?.takeIf { it.isNotBlank() } ?: "-"
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -175,7 +181,7 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                     }
 
                     if (isEditing) {
-                        // modo edición (dejamos igual que el tuyo)
+                        // modo edición
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -311,10 +317,10 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
 
                                 Spacer(modifier = Modifier.height(12.dp))
 
-                                // 👇 NUEVO: datos del programa de referidos
-                                InfoRow("Puntos LevelUp:", (user.puntos ?: 0).toString(), Color(0xFF39FF14))
-                                InfoRow("Nivel:", (user.nivel ?: 1).toString(), Color(0xFF39FF14))
-                                InfoRow("Tu código:", user.referralCode ?: "-", Color(0xFF1E90FF))
+                                // 👇 aquí va el programa de referidos/gamificación
+                                InfoRow("Puntos LevelUp:", puntos.toString(), Color(0xFF39FF14))
+                                InfoRow("Nivel:", "Lv. $nivelCalculado", Color(0xFF39FF14))
+                                InfoRow("Tu código:", codigo, Color(0xFF1E90FF))
 
                                 Spacer(modifier = Modifier.height(16.dp))
 

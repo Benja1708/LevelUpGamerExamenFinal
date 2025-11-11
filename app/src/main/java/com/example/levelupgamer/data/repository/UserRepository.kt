@@ -1,7 +1,7 @@
 package com.example.levelupgamer.repository
 
 import com.example.levelupgamer.data.User
-import com.example.levelupgamer.data.dao.UserDao
+import com.example.levelupgamer.data.UserDao
 
 class UserRepository(private val userDao: UserDao) {
 

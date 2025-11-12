@@ -72,4 +72,7 @@ dependencies {
     // ZXing QR Code Scanner
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.zxing:core:3.5.1")
+
+    implementation("androidx.compose.material:material-icons-extended:1.7.4")
+    implementation("androidx.compose.material:material-icons-extended")
 }

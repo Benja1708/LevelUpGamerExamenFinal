@@ -12,11 +12,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.levelupgamer.viewmodel.ProductoViewModel
+import com.example.levelupgamer.viewmodel.UserViewModel
+import com.example.levelupgamer.ui.screens.resenias.ReviewSection
 
 @Composable
-fun ProductoDetailScreen(navController: NavController, productoId: Int) {
-    val viewModel: ProductoViewModel = viewModel()
-    val productos by viewModel.productos.collectAsState()
+fun ProductoDetailScreen(
+    navController: NavController,
+    productoId: Int
+) {
+    val productoViewModel: ProductoViewModel = viewModel()
+    val userViewModel: UserViewModel = viewModel() // 👈 para obtener el nombre del usuario
+    val productos by productoViewModel.productos.collectAsState()
+    val currentUser by userViewModel.currentUser.collectAsState()
 
     val producto = productos.find { it.id == productoId }
 
@@ -25,13 +32,13 @@ fun ProductoDetailScreen(navController: NavController, productoId: Int) {
             .fillMaxSize()
             .background(Color.Black)
             .padding(16.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.TopCenter
     ) {
         if (producto == null) {
             Text(
                 "Producto no encontrado",
                 color = Color(0xFF39FF14),
-                fontFamily = FontFamily.Default, // tipografía por defecto
+                fontFamily = FontFamily.Default,
                 style = MaterialTheme.typography.headlineMedium
             )
         } else {
@@ -39,6 +46,7 @@ fun ProductoDetailScreen(navController: NavController, productoId: Int) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // ---------- Detalle del producto ----------
                 Text(
                     producto.nombre,
                     style = MaterialTheme.typography.headlineLarge,
@@ -60,7 +68,19 @@ fun ProductoDetailScreen(navController: NavController, productoId: Int) {
                     color = Color(0xFF39FF14)
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+                Divider(color = Color(0x22FFFFFF))
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // ---------- Sección de Reseñas ----------
+                // Pinta lista de reseñas, promedio y formulario para agregar
+                ReviewSection(
+                    productId = productoId,
+                    currentUserName = currentUser?.nombre
+                )
+
                 Spacer(modifier = Modifier.height(24.dp))
+
                 Button(
                     onClick = { navController.popBackStack() },
                     colors = ButtonDefaults.buttonColors(

@@ -8,9 +8,11 @@ import com.example.levelupgamer.data.User
 import com.example.levelupgamer.data.UserDao
 import com.example.levelupgamer.data.dao.ProductoDao
 import com.example.levelupgamer.data.model.Producto
+import com.example.levelupgamer.data.dao.ReviewDao
+import com.example.levelupgamer.data.model.Review
 
 @Database(
-    entities = [User::class, Producto::class],
+    entities = [User::class, Producto::class, Review::class],
     version = 4,              // 👈 subimos la versión porque agregamos campos al User
     exportSchema = false
 )
@@ -18,10 +20,10 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun productoDao(): ProductoDao
+    abstract fun reviewDao(): ReviewDao   // 👈 nuevo
 
     companion object {
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
+        @Volatile private var INSTANCE: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -30,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "levelup_db"
                 )
-                    .fallbackToDestructiveMigration()   // 👈 borra y recrea si cambia versión
+                    .fallbackToDestructiveMigration() // borrará y recreará si cambia versión
                     .build()
                 INSTANCE = instance
                 instance

@@ -9,12 +9,14 @@ import com.example.levelupgamer.data.model.Producto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 
 class ProductoViewModel(application: Application) : AndroidViewModel(application) {
 
-    // usa la misma DB que ya tenía tu proyecto
     private val db = Room.databaseBuilder(
         application,
         ProductoDatabase::class.java,
@@ -24,14 +26,19 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
     private val _productos = MutableStateFlow<List<Producto>>(emptyList())
     val productos: StateFlow<List<Producto>> = _productos.asStateFlow()
 
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl("http://10.0.2.2:8080/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val api: ProductoApi = retrofit.create(ProductoApi::class.java)
+
     init {
         viewModelScope.launch {
             val dao = db.productoDao()
 
-            // 1. leemos lo que ya hay
             val actuales = dao.getAllProductos().first()
 
-            // 2. lista de productos que pide la evaluación
             val examen = listOf(
                 Producto(
                     nombre = "Catan",
@@ -85,7 +92,6 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
                 )
             )
 
-            // 3. por cada uno del examen, si no está por nombre, lo insertamos
             val nombresActuales = actuales.map { it.nombre }.toSet()
             examen.forEach { prod ->
                 if (prod.nombre !in nombresActuales) {
@@ -93,7 +99,27 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
                 }
             }
 
-            // 4. y nos quedamos escuchando los cambios para la pantalla
+            try {
+                val remotos = api.getProductos()
+
+                val actualesDespuesDeSemilla = dao.getAllProductos().first()
+                val nombresDespues = actualesDespuesDeSemilla.map { it.nombre }.toSet()
+
+                remotos.forEach { remoto ->
+                    if (remoto.nombre !in nombresDespues) {
+                        dao.insert(
+                            Producto(
+                                nombre = remoto.nombre,
+                                descripcion = remoto.descripcion,
+                                precio = remoto.precio
+                            )
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
             dao.getAllProductos().collect { lista ->
                 _productos.value = lista
             }
@@ -125,5 +151,17 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
             db.productoDao().delete(producto)
         }
     }
+}
+
+data class ProductoRemoto(
+    val id: Long,
+    val nombre: String,
+    val precio: Double,
+    val descripcion: String
+)
+
+interface ProductoApi {
+    @GET("/api/productos")
+    suspend fun getProductos(): List<ProductoRemoto>
 }
 

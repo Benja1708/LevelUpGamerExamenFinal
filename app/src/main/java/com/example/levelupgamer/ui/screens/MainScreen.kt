@@ -24,7 +24,6 @@ fun MainScreen(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Título de la app
         Text(
             text = "LevelUP-Gamer",
             fontSize = 28.sp,
@@ -34,7 +33,6 @@ fun MainScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Navegación entre pestañas
         TabRow(selectedTabIndex = when (currentScreen) {
             "welcome" -> 0
             "login" -> 1
@@ -60,7 +58,6 @@ fun MainScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Contenido según la pestaña seleccionada
         when (currentScreen) {
             "welcome" -> WelcomeScreen()
             "login" -> LoginScreen(navController)
@@ -135,7 +132,6 @@ fun LoginScreen(navController: NavController) {
 
         Button(
             onClick = {
-                // Aquí iría la lógica de inicio de sesión
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -202,7 +198,6 @@ fun RegisterScreen(navController: NavController) {
 
         Button(
             onClick = {
-                // Aquí iría la lógica de registro
             },
             modifier = Modifier.fillMaxWidth()
         ) {

@@ -13,14 +13,14 @@ import com.example.levelupgamer.data.model.Review
 
 @Database(
     entities = [User::class, Producto::class, Review::class],
-    version = 4,              // 👈 subimos la versión porque agregamos campos al User
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun productoDao(): ProductoDao
-    abstract fun reviewDao(): ReviewDao   // 👈 nuevo
+    abstract fun reviewDao(): ReviewDao
 
     companion object {
         @Volatile private var INSTANCE: AppDatabase? = null
@@ -32,7 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "levelup_db"
                 )
-                    .fallbackToDestructiveMigration() // borrará y recreará si cambia versión
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

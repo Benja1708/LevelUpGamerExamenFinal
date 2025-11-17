@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.first
 
 class ProductoViewModel(application: Application) : AndroidViewModel(application) {
 
-    // usa la misma DB que ya tenía tu proyecto
     private val db = Room.databaseBuilder(
         application,
         ProductoDatabase::class.java,
@@ -28,10 +27,8 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             val dao = db.productoDao()
 
-            // 1. leemos lo que ya hay
             val actuales = dao.getAllProductos().first()
 
-            // 2. lista de productos que pide la evaluación
             val examen = listOf(
                 Producto(
                     nombre = "Catan",
@@ -85,7 +82,6 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
                 )
             )
 
-            // 3. por cada uno del examen, si no está por nombre, lo insertamos
             val nombresActuales = actuales.map { it.nombre }.toSet()
             examen.forEach { prod ->
                 if (prod.nombre !in nombresActuales) {
@@ -93,7 +89,6 @@ class ProductoViewModel(application: Application) : AndroidViewModel(application
                 }
             }
 
-            // 4. y nos quedamos escuchando los cambios para la pantalla
             dao.getAllProductos().collect { lista ->
                 _productos.value = lista
             }

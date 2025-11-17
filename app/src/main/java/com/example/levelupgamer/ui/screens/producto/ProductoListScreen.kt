@@ -29,7 +29,6 @@ import com.example.levelupgamer.viewmodel.CarritoViewModel
 import com.example.levelupgamer.viewmodel.ProductoViewModel
 import com.example.levelupgamer.viewmodel.UserViewModel
 
-// categorías para los filtros
 private val categoriasCaso = listOf(
     "Todos",
     "Juegos de Mesa",
@@ -52,11 +51,7 @@ fun ProductoListScreen(
     val productos by productoViewModel.productos.collectAsState()
     val currentUser by userViewModel.currentUser.collectAsState()
     val isAdmin = currentUser?.correo?.endsWith("@admin.cl") == true
-
-    // filtro seleccionado
     var categoriaSeleccionada by remember { mutableStateOf("Todos") }
-
-    // aplicar filtro a la lista
     val productosFiltrados = remember(productos, categoriaSeleccionada) {
         if (categoriaSeleccionada == "Todos") productos
         else productos.filter { it.categoria == categoriaSeleccionada }
@@ -83,7 +78,6 @@ fun ProductoListScreen(
                 .fillMaxSize()
         ) {
 
-            // --------- FILTROS ARRIBA ---------
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -122,7 +116,6 @@ fun ProductoListScreen(
                     )
                 }
             } else {
-                // --------- GRID COMO TENÍAS ---------
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier

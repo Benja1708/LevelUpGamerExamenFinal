@@ -86,7 +86,6 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                 .background(Color.Black)
         ) {
             if (currentUser == null) {
-                // sin sesión
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -129,9 +128,7 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                 }
             } else {
                 val user = currentUser!!
-                // puntos puede ser null si todavía no recreaste la BD
                 val puntos = user.puntos ?: 0
-                // nivel calculado: cada 50 pts = +1
                 val nivelCalculado = (puntos / 50) + 1
                 val codigo = user.referralCode?.takeIf { it.isNotBlank() } ?: "-"
 
@@ -140,7 +137,6 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    // encabezado
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -181,7 +177,6 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                     }
 
                     if (isEditing) {
-                        // modo edición
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -302,7 +297,6 @@ fun MiCuentaScreen(navController: NavController, userViewModel: UserViewModel) {
                             }
                         }
                     } else {
-                        // modo solo lectura
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()

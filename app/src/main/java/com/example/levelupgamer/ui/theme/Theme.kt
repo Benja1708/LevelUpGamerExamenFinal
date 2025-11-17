@@ -5,9 +5,9 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 private val LightColorScheme = lightColorScheme(
-    primary = androidx.compose.ui.graphics.Color(0xFF6A5ACD), // Color SlateBlue
-    secondary = androidx.compose.ui.graphics.Color(0xFF483D8B), // Color DarkSlateBlue
-    tertiary = androidx.compose.ui.graphics.Color(0xFF9370DB), // Color MediumPurple
+    primary = androidx.compose.ui.graphics.Color(0xFF6A5ACD),
+    secondary = androidx.compose.ui.graphics.Color(0xFF483D8B),
+    tertiary = androidx.compose.ui.graphics.Color(0xFF9370DB),
     background = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
     surface = androidx.compose.ui.graphics.Color(0xFFFFFFFF),
     onPrimary = androidx.compose.ui.graphics.Color(0xFFFFFFFF),

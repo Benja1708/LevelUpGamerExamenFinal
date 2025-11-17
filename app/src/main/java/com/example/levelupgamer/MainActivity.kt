@@ -17,10 +17,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1) precarga la tabla producto si está vacía
         precargarProductos()
 
-        // 2) tu UI de siempre
         setContent {
             LevelUPGamerTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
@@ -35,7 +33,7 @@ class MainActivity : ComponentActivity() {
         val productoDao = db.productoDao()
 
         lifecycleScope.launch {
-            val existentes = productoDao.getAllProductosOnce() // si no tienes esto, lo explico abajo
+            val existentes = productoDao.getAllProductosOnce()
             if (existentes.isEmpty()) {
                 val productos = listOf(
                     Producto(

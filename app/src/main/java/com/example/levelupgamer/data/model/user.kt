@@ -11,7 +11,6 @@ data class User(
     val correo: String,
     val contrasena: String,
     val anioNacimiento: Int,
-    // 👇 campos nuevos para gamificación
     val puntos: Int = 0,
     val referralCode: String = ""
 )

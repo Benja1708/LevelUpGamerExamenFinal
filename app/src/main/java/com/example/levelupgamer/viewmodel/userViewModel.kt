@@ -22,7 +22,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         repository = UserRepository(dao)
     }
 
-    // registro con código de referido opcional
     fun register(
         nombre: String,
         correo: String,
@@ -33,18 +32,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     ) {
         viewModelScope.launch {
             try {
-                // ¿ya existe ese correo?
                 val yaExiste = repository.getByEmail(correo)
                 if (yaExiste != null) {
                     onComplete(false, "Este correo ya está registrado")
                     return@launch
                 }
 
-                // genero mi código
                 val miCodigo = generateReferralCode(nombre)
                 var puntosIniciales = 0
 
-                // si vino con código de otra persona
                 if (!codigoReferido.isNullOrBlank()) {
                     val invitador = repository.getByReferralCode(codigoReferido)
                     if (invitador != null) {
@@ -52,7 +48,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                         val actualizado = invitador.copy(puntos = invitador.puntos + 10)
                         repository.updateUser(actualizado)
 
-                        // yo gano 10 por venir referido
                         puntosIniciales = 10
                     }
                 }

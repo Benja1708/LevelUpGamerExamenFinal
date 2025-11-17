@@ -24,7 +24,6 @@ class CarritoViewModel(application: Application) : AndroidViewModel(application)
     val totalCarrito: StateFlow<Double> = _totalCarrito.asStateFlow()
 
     init {
-        // Cargar los productos del carrito desde la base de datos al iniciar
         viewModelScope.launch {
             carritoRepository.getAllCarritoItems().collect { carritoItems ->
                 _productosCarrito.value = carritoItems
@@ -35,15 +34,11 @@ class CarritoViewModel(application: Application) : AndroidViewModel(application)
 
     fun agregarAlCarrito(producto: Producto) {
         viewModelScope.launch {
-            // Verificar si el producto ya está en el carrito
             val existingItem = carritoRepository.getCarritoItemByProductId(producto.id)
-
             if (existingItem != null) {
-                // Si ya existe, aumentar la cantidad
                 val updatedItem = existingItem.copy(cantidad = existingItem.cantidad + 1)
                 carritoRepository.update(updatedItem)
             } else {
-                // Si no existe, agregar nuevo item
                 val carritoItem = CarritoItem(
                     productoId = producto.id,
                     nombre = producto.nombre,

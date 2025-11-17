@@ -32,7 +32,6 @@ fun ReviewSection(
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
-        // Encabezado con promedio
         Row(
             modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -52,7 +51,6 @@ fun ReviewSection(
             )
         }
 
-        // Lista
         if (reviews.isEmpty()) {
             Text("Aún no hay reseñas", color = Color(0xFFD3D3D3))
         } else {
@@ -75,7 +73,6 @@ fun ReviewSection(
 
         Spacer(Modifier.height(12.dp))
 
-        // Formulario para agregar reseña
         var localRating by remember { mutableStateOf(5) }
         var comment by remember { mutableStateOf("") }
 

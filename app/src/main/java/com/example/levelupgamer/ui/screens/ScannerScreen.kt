@@ -19,7 +19,6 @@ import com.google.zxing.integration.android.IntentIntegrator
 fun ScannerScreen() {
     val context = LocalContext.current
 
-    // launcher que recibe el resultado del escáner
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) { result ->
@@ -39,7 +38,6 @@ fun ScannerScreen() {
         contentAlignment = Alignment.Center
     ) {
         Button(onClick = {
-            // intentamos sacar la Activity real
             val activity = context.findActivity()
             if (activity == null) {
                 Toast.makeText(context, "No se pudo abrir la cámara (no hay Activity)", Toast.LENGTH_LONG).show()
@@ -52,8 +50,6 @@ fun ScannerScreen() {
             integrator.setCameraId(0)
             integrator.setBeepEnabled(true)
             integrator.setBarcodeImageEnabled(true)
-
-            // lanzamos el intent del integrator usando el launcher de Compose
             launcher.launch(integrator.createScanIntent())
         }) {
             Text("Iniciar Escáner")
@@ -61,9 +57,6 @@ fun ScannerScreen() {
     }
 }
 
-/**
- * Extensión para obtener la Activity desde un Context en Compose
- */
 private tailrec fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is android.content.ContextWrapper -> baseContext.findActivity()

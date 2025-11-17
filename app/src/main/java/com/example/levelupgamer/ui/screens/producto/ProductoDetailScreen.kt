@@ -21,7 +21,7 @@ fun ProductoDetailScreen(
     productoId: Int
 ) {
     val productoViewModel: ProductoViewModel = viewModel()
-    val userViewModel: UserViewModel = viewModel() // 👈 para obtener el nombre del usuario
+    val userViewModel: UserViewModel = viewModel()
     val productos by productoViewModel.productos.collectAsState()
     val currentUser by userViewModel.currentUser.collectAsState()
 
@@ -46,7 +46,6 @@ fun ProductoDetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // ---------- Detalle del producto ----------
                 Text(
                     producto.nombre,
                     style = MaterialTheme.typography.headlineLarge,
@@ -71,9 +70,6 @@ fun ProductoDetailScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Divider(color = Color(0x22FFFFFF))
                 Spacer(modifier = Modifier.height(8.dp))
-
-                // ---------- Sección de Reseñas ----------
-                // Pinta lista de reseñas, promedio y formulario para agregar
                 ReviewSection(
                     productId = productoId,
                     currentUserName = currentUser?.nombre

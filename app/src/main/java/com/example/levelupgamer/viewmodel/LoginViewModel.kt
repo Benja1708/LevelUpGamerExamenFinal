@@ -17,7 +17,6 @@ class LoginViewModel(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    // Expose logged-in user's email
     private val _userEmail = MutableStateFlow<String?>(null)
     val userEmail: StateFlow<String?> = _userEmail.asStateFlow()
 
@@ -45,7 +44,7 @@ class LoginViewModel(
 
             if (loginSuccess) {
                 _uiState.value = state.copy(isLoading = false, error = null)
-                _userEmail.value = state.username // Save the email on successful login
+                _userEmail.value = state.username
                 onSuccess()
             } else {
                 _uiState.value = state.copy(isLoading = false, error = "Credenciales incorrectas")

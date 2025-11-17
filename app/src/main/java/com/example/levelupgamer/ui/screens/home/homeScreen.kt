@@ -49,7 +49,6 @@ fun HomeScreen(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        // título
         Text(
             text = "¡Bienvenido a LevelUpGamer!",
             color = Color(0xFF39FF14),
@@ -59,7 +58,6 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // subtítulo con el nombre si hay usuario
         Text(
             text = currentUser?.nombre?.let { "Hola, $it 👋" } ?: "Tu tienda gamer favorita",
             color = Color.White,
@@ -70,7 +68,6 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // animación del logo (la que ya tenías)
         val infiniteTransition = rememberInfiniteTransition()
         val scale by infiniteTransition.animateFloat(
             initialValue = 1f,

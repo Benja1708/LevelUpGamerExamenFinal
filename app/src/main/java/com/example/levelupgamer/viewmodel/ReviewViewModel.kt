@@ -18,18 +18,15 @@ class ReviewViewModel(application: Application) : AndroidViewModel(application) 
     private val repo: ReviewRepository =
         ReviewRepository(AppDatabase.getDatabase(application).reviewDao())
 
-    // producto “actual”
     private val _productId = MutableStateFlow<Int?>(null)
     val productId: StateFlow<Int?> = _productId
 
-    // lista de reseñas observable
     val reviews: StateFlow<List<Review>> =
         _productId.flatMapLatest { id ->
             if (id == null) kotlinx.coroutines.flow.flowOf(emptyList())
             else repo.getReviews(id)
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    // promedio observable
     val average: StateFlow<Double?> =
         _productId.flatMapLatest { id ->
             if (id == null) kotlinx.coroutines.flow.flowOf(null)

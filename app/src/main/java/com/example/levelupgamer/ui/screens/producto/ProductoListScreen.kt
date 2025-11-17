@@ -25,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.levelupgamer.R
 import com.example.levelupgamer.data.model.Producto
+import com.example.levelupgamer.util.toClp
 import com.example.levelupgamer.viewmodel.CarritoViewModel
 import com.example.levelupgamer.viewmodel.ProductoViewModel
 import com.example.levelupgamer.viewmodel.UserViewModel
@@ -188,7 +189,7 @@ fun ProductoCard(
                         maxLines = 2
                     )
                     Text(
-                        text = "$${producto.precio}",
+                        text = "$${producto.precio.toClp()}",
                         color = Color(0xFF39FF14),
                         fontSize = 12.sp
                     )

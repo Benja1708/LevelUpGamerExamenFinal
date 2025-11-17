@@ -16,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.levelupgamer.util.toClp
 import com.example.levelupgamer.viewmodel.CarritoViewModel
 import com.example.levelupgamer.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -38,6 +40,7 @@ fun CarritoScreen(navController: NavController, userViewModel: UserViewModel) {
 
     Scaffold(
         modifier = Modifier.background(Color.Black),
+        containerColor = Color.Black,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
@@ -64,6 +67,9 @@ fun CarritoScreen(navController: NavController, userViewModel: UserViewModel) {
         },
         bottomBar = {
             if (productosCarrito.isNotEmpty()) {
+                val totalFormateado = totalCarrito.toClp()
+                val totalConDescFormateado = totalConDescuento.toClp()
+
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -72,6 +78,7 @@ fun CarritoScreen(navController: NavController, userViewModel: UserViewModel) {
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+
                         if (tieneDescuento) {
                             Text(
                                 "¡Descuento del 20% aplicado!",
@@ -79,25 +86,46 @@ fun CarritoScreen(navController: NavController, userViewModel: UserViewModel) {
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(bottom = 8.dp)
                             )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    "Total sin descuento:",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color(0xFFD3D3D3)
+                                )
+                                Text(
+                                    "$$totalFormateado",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color(0xFFD3D3D3),
+                                    textDecoration = TextDecoration.LineThrough
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
                         }
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                "Total:",
+                                if (tieneDescuento) "Total a pagar:" else "Total:",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color(0xFF39FF14),
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                "$${String.format("%.2f", totalConDescuento)}",
+                                "$$totalConDescFormateado",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color(0xFF39FF14),
                                 fontWeight = FontWeight.Bold
                             )
                         }
+
                         Spacer(modifier = Modifier.height(16.dp))
+
                         Button(
                             onClick = {
                                 scope.launch {
@@ -113,6 +141,7 @@ fun CarritoScreen(navController: NavController, userViewModel: UserViewModel) {
                         ) {
                             Text("Finalizar Compra", fontWeight = FontWeight.Bold)
                         }
+
                         TextButton(
                             onClick = { carritoViewModel.limpiarCarrito() },
                             modifier = Modifier.fillMaxWidth()
@@ -193,14 +222,14 @@ fun CarritoScreen(navController: NavController, userViewModel: UserViewModel) {
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    "$${carritoItem.precio} x ${carritoItem.cantidad}",
+                                    "$${carritoItem.precio.toClp()} x ${carritoItem.cantidad}",
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = Color(0xFF1E90FF),
                                     fontFamily = FontFamily.Default,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    "Subtotal: $${String.format("%.2f", carritoItem.precio * carritoItem.cantidad)}",
+                                    "Subtotal: $${(carritoItem.precio * carritoItem.cantidad).toClp()}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = Color(0xFF39FF14)
                                 )

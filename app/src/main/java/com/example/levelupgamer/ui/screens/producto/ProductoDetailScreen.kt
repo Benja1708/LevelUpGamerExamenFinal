@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import com.example.levelupgamer.viewmodel.ProductoViewModel
 import com.example.levelupgamer.viewmodel.UserViewModel
 import com.example.levelupgamer.ui.screens.resenias.ReviewSection
+import com.example.levelupgamer.util.toClp
 
 @Composable
 fun ProductoDetailScreen(
@@ -61,7 +62,7 @@ fun ProductoDetailScreen(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    "Precio: $${producto.precio}",
+                    text = "$${producto.precio.toClp()}",
                     style = MaterialTheme.typography.titleMedium,
                     fontFamily = FontFamily.Default,
                     color = Color(0xFF39FF14)

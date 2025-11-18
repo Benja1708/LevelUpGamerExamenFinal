@@ -154,7 +154,7 @@ fun ProductoCard(
         shape = RoundedCornerShape(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(240.dp)
+            .height(260.dp)           // alto total de la card
             .clickable { navController.navigate("productoDetalle/${producto.id}") },
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF2E2E2E)
@@ -163,37 +163,46 @@ fun ProductoCard(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+
+            // 🔹 Imagen del producto
             Image(
                 painter = painterResource(id = productoImage(producto.nombre)),
                 contentDescription = producto.nombre,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(110.dp),
+                    .height(140.dp),
                 contentScale = ContentScale.Crop
             )
 
+            // 🔹 Zona inferior: nombre, precio y botón
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFF555555))
-                    .padding(8.dp)
-                    .weight(1f),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .background(Color(0xFF2E2E2E))
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
+                    .height(110.dp) // fija para que el botón quede alineado
             ) {
-                Column {
-                    Text(
-                        text = producto.nombre,
-                        color = Color(0xFF39FF14),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp,
-                        maxLines = 2
-                    )
-                    Text(
-                        text = "$${producto.precio.toClp()}",
-                        color = Color(0xFF39FF14),
-                        fontSize = 12.sp
-                    )
-                }
+                // Nombre (máx 2 líneas)
+                Text(
+                    text = producto.nombre,
+                    color = Color(0xFF39FF14),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    maxLines = 2,
+                    lineHeight = 18.sp
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                // Precio
+                Text(
+                    text = "$${producto.precio.toClp()}",
+                    color = Color(0xFF39FF14),
+                    fontSize = 12.sp
+                )
+
+                // Esto empuja el botón hacia abajo siempre
+                Spacer(modifier = Modifier.weight(1f))
 
                 if (isAdmin) {
                     Row(
@@ -202,25 +211,36 @@ fun ProductoCard(
                     ) {
                         Button(
                             onClick = onEdit,
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Yellow,
+                                contentColor = Color.Black
+                            ),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Editar", color = Color.Black, fontSize = 12.sp)
+                            Text("Editar", fontSize = 12.sp)
                         }
                         Spacer(modifier = Modifier.width(6.dp))
                         Button(
                             onClick = onDelete,
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Red,
+                                contentColor = Color.White
+                            ),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Eliminar", color = Color.White, fontSize = 12.sp)
+                            Text("Eliminar", fontSize = 12.sp)
                         }
                     }
                 } else {
                     Button(
                         onClick = onAddToCart,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B5BFF)),
-                        modifier = Modifier.fillMaxWidth()
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF6B5BFF),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(38.dp)
                     ) {
                         Text("Agregar al carrito", fontSize = 12.sp)
                     }

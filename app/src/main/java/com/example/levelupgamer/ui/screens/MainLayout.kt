@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.levelupgamer.ui.theme.PurpleGrey40
+import com.example.levelupgamer.ui.theme.DarkSurfaceSoft
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +36,7 @@ fun MainLayout(
             ModalDrawerSheet(
                 modifier = Modifier
                     .width(220.dp),
-                drawerContainerColor = PurpleGrey40
+                drawerContainerColor = DarkSurfaceSoft
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
 

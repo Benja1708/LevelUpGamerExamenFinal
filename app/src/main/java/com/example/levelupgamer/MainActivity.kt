@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.levelupgamer.data.database.AppDatabase
 import com.example.levelupgamer.data.model.Producto
 import com.example.levelupgamer.ui.AppNavigation
-import com.example.levelupgamer.ui.theme.LevelUPGamerTheme
+import com.example.levelupgamer.ui.theme.LevelUpGamerTheme
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         precargarProductos()
 
         setContent {
-            LevelUPGamerTheme {
+            LevelUpGamerTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     AppNavigation()
                 }

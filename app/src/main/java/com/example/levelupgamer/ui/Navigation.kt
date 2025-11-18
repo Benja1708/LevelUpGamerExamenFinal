@@ -31,6 +31,7 @@ import com.example.levelupgamer.ui.screens.carrito.CarritoScreen
 import com.example.levelupgamer.ui.screens.cuenta.MiCuentaScreen
 import com.example.levelupgamer.ui.screens.home.HomeScreen
 import com.example.levelupgamer.ui.screens.login.LoginScreen
+import com.example.levelupgamer.ui.screens.news.NewsScreen
 import com.example.levelupgamer.ui.screens.producto.AgregarProductoScreen
 import com.example.levelupgamer.ui.screens.producto.ProductoDetailScreen
 import com.example.levelupgamer.ui.screens.producto.ProductoListScreen
@@ -39,6 +40,7 @@ import com.example.levelupgamer.ui.screens.welcome.ContactoScreen
 import com.example.levelupgamer.ui.screens.welcome.NosotrosScreen
 import com.example.levelupgamer.ui.screens.welcome.WelcomeScreen
 import com.example.levelupgamer.viewmodel.CarritoViewModel
+import com.example.levelupgamer.viewmodel.NewsViewModel
 import com.example.levelupgamer.viewmodel.ProductoViewModel
 import com.example.levelupgamer.viewmodel.UserViewModel
 
@@ -51,6 +53,7 @@ fun AppNavigation() {
     val productoViewModel: ProductoViewModel = viewModel()
     val productosCarrito by carritoViewModel.productosCarrito.collectAsState()
     val cantidadCarrito = productosCarrito.sumOf { it.cantidad }
+    val newsViewModel: NewsViewModel = viewModel()
 
     NavHost(navController, startDestination = "welcome") {
         composable("welcome") { WelcomeScreen(navController) }
@@ -82,7 +85,6 @@ fun AppNavigation() {
                                 tint = Color(0xFF39FF14)
                             )
 
-                            // 🔢 Badge con la cantidad de productos
                             if (cantidadCarrito > 0) {
                                 Badge(
                                     modifier = Modifier
@@ -134,6 +136,15 @@ fun AppNavigation() {
                 title = "Contacto"
             ) {
                 ContactoScreen(navController)
+            }
+        }
+
+        composable("news") {
+            MainLayout(
+                navController = navController,
+                title = "Noticias & Eventos"
+            ) {
+                NewsScreen(newsViewModel)
             }
         }
 

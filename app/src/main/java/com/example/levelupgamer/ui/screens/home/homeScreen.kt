@@ -92,12 +92,19 @@ fun HomeScreen(
             navController.navigate("productos")
         }
         Spacer(modifier = Modifier.height(10.dp))
+
         QuickActionButton("Mi cuenta") {
             navController.navigate("miCuenta")
         }
         Spacer(modifier = Modifier.height(10.dp))
+
         QuickActionButton("Escanear QR") {
             navController.navigate("scanner")
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+
+        QuickActionButton("Noticias & Eventos") {
+            navController.navigate("news")
         }
 
         Spacer(modifier = Modifier.height(22.dp))

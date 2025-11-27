@@ -84,17 +84,23 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    // <<-- FUNCIÓN FALTANTE AÑADIDA PARA GUARDAR LOS CAMBIOS -->>
     fun updateUser(user: User, onComplete: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             try {
+                // Llama al repositorio para actualizar en la base de datos
                 repository.updateUser(user)
+
+                // Actualiza el StateFlow para reflejar los cambios en la UI (MiCuentaScreen)
                 _currentUser.value = user
-                onComplete(true, null)
+
+                onComplete(true, null) // Éxito
             } catch (e: Exception) {
-                onComplete(false, e.message)
+                onComplete(false, e.message) // Error
             }
         }
     }
+    // <<-- FIN FUNCIÓN FALTANTE -->>
 
     fun logout() {
         _currentUser.value = null

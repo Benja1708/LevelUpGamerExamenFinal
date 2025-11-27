@@ -1,7 +1,9 @@
 package com.example.levelupgamer.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.levelupgamer.data.database.AppDatabase
 import com.example.levelupgamer.data.repository.AuthRepository
 import com.example.levelupgamer.ui.screens.login.LoginUiState
 import kotlinx.coroutines.delay
@@ -10,9 +12,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LoginViewModel(
-    private val authRepository: AuthRepository = AuthRepository()
-) : ViewModel() {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val userDao = AppDatabase.getDatabase(application).userDao()
+    private val authRepository: AuthRepository = AuthRepository(userDao)
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -21,18 +24,18 @@ class LoginViewModel(
     val userEmail: StateFlow<String?> = _userEmail.asStateFlow()
 
     fun onUsernameChange(newUsername: String) {
-        _uiState.value = _uiState.value.copy(username = newUsername)
+        _uiState.value = _uiState.value.copy(username = newUsername, error = null)
     }
 
     fun onPasswordChange(newPassword: String) {
-        _uiState.value = _uiState.value.copy(password = newPassword)
+        _uiState.value = _uiState.value.copy(password = newPassword, error = null)
     }
 
     fun submit(onSuccess: () -> Unit) {
         val state = _uiState.value
 
         if (state.username.isBlank() || state.password.isBlank()) {
-            _uiState.value = state.copy(error = "Usuario o contraseña vacíos")
+            _uiState.value = state.copy(error = "Correo y/o contraseña no pueden estar vacíos")
             return
         }
 

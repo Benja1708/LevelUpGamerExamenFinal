@@ -1,112 +1,69 @@
 package com.example.levelupgamer.ui.screens.news
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.levelupgamer.data.model.NewsItem
+import com.example.levelupgamer.ui.theme.Green80
 import com.example.levelupgamer.viewmodel.NewsViewModel
-
-private val filtros = listOf("Todos", "Noticias", "Eventos")
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import android.util.Log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsScreen(
-    newsViewModel: NewsViewModel = viewModel()
+    navController: NavController,
+    viewModel: NewsViewModel = viewModel()
 ) {
-    val items by newsViewModel.items.collectAsState()
-    val filtro by newsViewModel.filtro.collectAsState()
+    val newsItems by viewModel.items.collectAsState()
+    val filtro by viewModel.filtro.collectAsState()
 
-    val itemsFiltrados = remember(items, filtro) {
-        when (filtro) {
-            "Noticias" -> items.filter { it.tipo == "Noticia" }
-            "Eventos"  -> items.filter { it.tipo == "Evento" }
-            else       -> items
-        }
+    val filteredItems = if (filtro == "Todos") {
+        newsItems
+    } else {
+        newsItems.filter { it.tipo == filtro }
     }
 
     Scaffold(
-        containerColor = Color(0xFF121212),
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Noticias & Eventos",
-                        color = Color(0xFF39FF14),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black
-                )
+            CenterAlignedTopAppBar(
+                title = { Text("LevelUp Noticias") }
             )
         }
-    ) { padding ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .padding(padding)
+                .padding(paddingValues)
                 .fillMaxSize()
-                .background(Color(0xFF121212))
         ) {
-            // Filtros (chips)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                filtros.forEach { f ->
-                    val selected = f == filtro
-                    FilterChip(
-                        selected = selected,
-                        onClick = { newsViewModel.cambiarFiltro(f) },
-                        label = {
-                            Text(
-                                text = f,
-                                color = if (selected) Color.Black else Color.White,
-                                fontSize = 12.sp
-                            )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Color(0xFF39FF14),
-                            containerColor = Color(0xFF2E2E2E)
-                        )
-                    )
-                }
-            }
+            FiltroSection(
+                filtroActual = filtro,
+                onFiltroChange = viewModel::cambiarFiltro
+            )
 
-            if (itemsFiltrados.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "No hay noticias ni eventos aún",
-                        color = Color.LightGray
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(itemsFiltrados) { item ->
-                        NewsCard(item)
-                    }
+            LazyColumn(
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(filteredItems) { item ->
+                    NewsItemCard(item, navController)
                 }
             }
         }
@@ -114,78 +71,121 @@ fun NewsScreen(
 }
 
 @Composable
-private fun NewsCard(item: NewsItem) {
-    var expandido by remember { mutableStateOf(false) }
+fun FiltroSection(
+    filtroActual: String,
+    onFiltroChange: (String) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Chip(
+            texto = "Todos",
+            isSelected = filtroActual == "Todos",
+            onClick = { onFiltroChange("Todos") }
+        )
+        Chip(
+            texto = "Noticia",
+            isSelected = filtroActual == "Noticia",
+            onClick = { onFiltroChange("Noticia") }
+        )
+        Chip(
+            texto = "Evento",
+            isSelected = filtroActual == "Evento",
+            onClick = { onFiltroChange("Evento") }
+        )
+    }
+}
 
+@Composable
+fun Chip(
+    texto: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = if (isSelected) Green80.copy(alpha = 0.5f) else Color.Transparent,
+            contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+        ),
+        border = BorderStroke(1.dp, Green80)
+    ) {
+        Text(texto)
+    }
+}
+
+@Composable
+fun NewsItemCard(item: NewsItem, navController: NavController) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
-        shape = RoundedCornerShape(14.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            // Título + tipo
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = item.titulo,
-                    color = Color(0xFF39FF14),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    modifier = Modifier.weight(1f)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = item.tipo.uppercase(),
-                    color = if (item.tipo == "Evento") Color(0xFF1E90FF) else Color(0xFFFFC107),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+        Column(modifier = Modifier.fillMaxWidth()) {
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = item.fecha,
-                color = Color.Gray,
-                fontSize = 11.sp
+            Image(
+                painter = painterResource(id = item.imageResId),
+                contentDescription = item.titulo,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp),
+                contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = item.resumen,
-                color = Color.White,
-                fontSize = 13.sp
-            )
-
-            AnimatedVisibility(visible = expandido) {
-                Column {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Divider(color = Color(0xFF333333))
-                    Spacer(modifier = Modifier.height(8.dp))
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
-                        text = item.contenido,
-                        color = Color(0xFFE0E0E0),
-                        fontSize = 13.sp,
-                        lineHeight = 18.sp
+                        text = item.tipo,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Green80,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = item.fecha,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextButton(
-                onClick = { expandido = !expandido },
-                contentPadding = PaddingValues(0.dp)
-            ) {
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = if (expandido) "Ver menos" else "Ver más",
-                    color = Color(0xFF39FF14),
-                    fontSize = 13.sp
+                    text = item.titulo,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = item.resumen,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable {
+                            navController.navigate("newsDetail/${item.id}")
+                        }
+                        .padding(vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "Detalles",
+                        tint = Green80,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Leer más",
+                        color = Green80,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
             }
         }
     }

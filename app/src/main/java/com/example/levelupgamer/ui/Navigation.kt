@@ -31,6 +31,7 @@ import com.example.levelupgamer.ui.screens.carrito.CarritoScreen
 import com.example.levelupgamer.ui.screens.cuenta.MiCuentaScreen
 import com.example.levelupgamer.ui.screens.home.HomeScreen
 import com.example.levelupgamer.ui.screens.login.LoginScreen
+import com.example.levelupgamer.ui.screens.news.NewsDetailScreen // <<-- IMPORTACIÓN CLAVE: Añadir NewsDetailScreen
 import com.example.levelupgamer.ui.screens.news.NewsScreen
 import com.example.levelupgamer.ui.screens.producto.AgregarProductoScreen
 import com.example.levelupgamer.ui.screens.producto.ProductoDetailScreen
@@ -144,7 +145,24 @@ fun AppNavigation() {
                 navController = navController,
                 title = "Noticias & Eventos"
             ) {
-                NewsScreen(newsViewModel)
+                NewsScreen(navController, newsViewModel)
+            }
+        }
+
+        composable(
+            route = "newsDetail/{newsId}",
+            arguments = listOf(navArgument("newsId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val newsId = backStackEntry.arguments?.getInt("newsId") ?: 0
+            MainLayout(
+                navController = navController,
+                title = "Detalle de Noticia"
+            ) {
+                NewsDetailScreen(
+                    navController = navController,
+                    newsId = newsId,
+                    viewModel = newsViewModel
+                )
             }
         }
 

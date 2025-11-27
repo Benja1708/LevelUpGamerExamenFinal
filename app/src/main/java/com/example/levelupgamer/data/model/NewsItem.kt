@@ -7,5 +7,6 @@ data class NewsItem(
     val tipo: String,
     val fecha: String,
     val resumen: String,
-    val contenido: String
+    val contenido: String,
+    val imageResId: Int
 )

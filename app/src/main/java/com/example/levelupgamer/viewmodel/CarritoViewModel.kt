@@ -68,6 +68,10 @@ class CarritoViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun vaciarCarrito() {
+        limpiarCarrito()
+    }
+
     fun limpiarCarrito() {
         viewModelScope.launch {
             carritoRepository.deleteAll()

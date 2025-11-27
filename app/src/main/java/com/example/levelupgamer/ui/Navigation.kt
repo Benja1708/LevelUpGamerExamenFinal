@@ -28,10 +28,11 @@ import com.example.levelupgamer.ui.screens.EditProductoScreen
 import com.example.levelupgamer.ui.screens.MainLayout
 import com.example.levelupgamer.ui.screens.ScannerScreen
 import com.example.levelupgamer.ui.screens.carrito.CarritoScreen
+import com.example.levelupgamer.ui.screens.carrito.CheckoutScreen
 import com.example.levelupgamer.ui.screens.cuenta.MiCuentaScreen
 import com.example.levelupgamer.ui.screens.home.HomeScreen
 import com.example.levelupgamer.ui.screens.login.LoginScreen
-import com.example.levelupgamer.ui.screens.news.NewsDetailScreen // <<-- IMPORTACIÓN CLAVE: Añadir NewsDetailScreen
+import com.example.levelupgamer.ui.screens.news.NewsDetailScreen
 import com.example.levelupgamer.ui.screens.news.NewsScreen
 import com.example.levelupgamer.ui.screens.producto.AgregarProductoScreen
 import com.example.levelupgamer.ui.screens.producto.ProductoDetailScreen
@@ -181,6 +182,19 @@ fun AppNavigation() {
                 title = "Carrito"
             ) {
                 CarritoScreen(navController, userViewModel)
+            }
+        }
+
+        composable("checkout") {
+            MainLayout(
+                navController = navController,
+                title = "Finalizar Compra"
+            ) {
+                CheckoutScreen(
+                    navController = navController,
+                    carritoViewModel = carritoViewModel,
+                    userViewModel = userViewModel
+                )
             }
         }
 

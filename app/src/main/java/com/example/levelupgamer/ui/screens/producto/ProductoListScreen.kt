@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,9 +50,21 @@ private val categoriasCaso = listOf(
     "Sillas Gamers",
     "Mouse",
     "Mousepad",
-    "Poleras gamers"
+    "Poleras Personalizadas"
 )
-
+fun getProductCategory(producto: Producto): String {
+    return when {
+        producto.descripcion.contains("Juegos de Mesa", ignoreCase = true) -> "Juegos de Mesa"
+        producto.descripcion.contains("Accesorios", ignoreCase = true) -> "Accesorios"
+        producto.descripcion.contains("Consolas", ignoreCase = true) -> "Consolas"
+        producto.descripcion.contains("Computadores Gamers", ignoreCase = true) -> "Computadores Gamers"
+        producto.descripcion.contains("Sillas Gamers", ignoreCase = true) -> "Sillas Gamers"
+        producto.descripcion.contains("Mousepad", ignoreCase = true) -> "Mousepad"
+        (producto.descripcion.contains("Mouse", ignoreCase = true) || producto.nombre.contains("Mouse", ignoreCase = true)) && !producto.descripcion.contains("Mousepad", ignoreCase = true) -> "Mouse"
+        producto.descripcion.contains("Poleras Personalizadas", ignoreCase = true) -> "Poleras Personalizadas"
+        else -> "Otros"
+    }
+}
 @Composable
 fun ProductoListScreen(
     navController: NavController,
@@ -62,9 +76,16 @@ fun ProductoListScreen(
     val currentUser by userViewModel.currentUser.collectAsState()
     val isAdmin = currentUser?.correo?.endsWith("@admin.cl") == true
     var categoriaSeleccionada by remember { mutableStateOf("Todos") }
-    val productosFiltrados = remember(productos, categoriaSeleccionada) {
-        if (categoriaSeleccionada == "Todos") productos
-        else productos.filter { it.categoria == categoriaSeleccionada }
+    var searchQuery by remember { mutableStateOf("") }
+    val productosFiltrados = remember(productos, categoriaSeleccionada, searchQuery) {
+        productos
+            .filter { prod ->
+                val categoryMatch = categoriaSeleccionada == "Todos" || getProductCategory(prod) == categoriaSeleccionada
+                val queryMatch = searchQuery.isBlank() ||
+                        prod.nombre.contains(searchQuery, ignoreCase = true) ||
+                        prod.descripcion.contains(searchQuery, ignoreCase = true)
+                categoryMatch && queryMatch
+            }
     }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -151,6 +172,28 @@ fun ProductoListScreen(
                 .fillMaxSize()
         ) {
 
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Buscar productos...", color = Color.White.copy(alpha = 0.7f)) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Buscar", tint = Color(0xFF39FF14)) },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF39FF14),
+                    unfocusedBorderColor = Color(0xFF2E2E2E),
+                    focusedLabelColor = Color(0xFF39FF14),
+                    cursorColor = Color(0xFF39FF14),
+                    focusedContainerColor = Color(0xFF1F1F1F),
+                    unfocusedContainerColor = Color(0xFF1F1F1F),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                textStyle = TextStyle(color = Color.White)
+            )
+
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -199,7 +242,7 @@ fun ProductoListScreen(
                 ) {
                     items(
                         items = productosFiltrados,
-                        key = { it.id }   // usa el id del producto para animaciones estables
+                        key = { it.id }
                     ) { prod ->
                         AnimatedVisibility(
                             visible = true,

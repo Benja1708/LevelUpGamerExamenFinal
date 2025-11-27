@@ -3,6 +3,7 @@ package com.example.levelupgamer.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.levelupgamer.R
 import com.example.levelupgamer.data.database.CarritoDatabase
 import com.example.levelupgamer.data.model.CarritoItem
 import com.example.levelupgamer.data.model.Producto
@@ -36,6 +37,7 @@ class CarritoViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             val existingItem = carritoRepository.getCarritoItemByProductId(producto.id)
             if (existingItem != null) {
+                // Si el item existe, se actualiza solo la cantidad
                 val updatedItem = existingItem.copy(cantidad = existingItem.cantidad + 1)
                 carritoRepository.update(updatedItem)
             } else {
@@ -44,7 +46,8 @@ class CarritoViewModel(application: Application) : AndroidViewModel(application)
                     nombre = producto.nombre,
                     descripcion = producto.descripcion,
                     precio = producto.precio,
-                    cantidad = 1
+                    cantidad = 1,
+                    imageResId = productoImage(producto.nombre)
                 )
                 carritoRepository.insert(carritoItem)
             }
@@ -84,5 +87,20 @@ class CarritoViewModel(application: Application) : AndroidViewModel(application)
 
     fun getCantidadTotal(): Int {
         return _productosCarrito.value.sumOf { it.cantidad }
+    }
+    private fun productoImage(nombre: String): Int {
+        return when {
+            nombre.contains("catan", ignoreCase = true) -> R.drawable.catan
+            nombre.contains("carcassonne", ignoreCase = true) -> R.drawable.carcassonne
+            nombre.contains("xbox", ignoreCase = true) -> R.drawable.control_xbox
+            nombre.contains("hyperx", ignoreCase = true) -> R.drawable.audifonos_hyperx
+            nombre.contains("playstation", ignoreCase = true) || nombre.contains("ps5", ignoreCase = true) -> R.drawable.ps5
+            nombre.contains("pc", ignoreCase = true) && nombre.contains("gamer", ignoreCase = true) -> R.drawable.pc_gamer_asus
+            nombre.contains("silla", ignoreCase = true) -> R.drawable.silla_gamer
+            nombre.contains("mousepad", ignoreCase = true) -> R.drawable.mousepad_gamer
+            nombre.contains("mouse", ignoreCase = true) -> R.drawable.mouse_gamer
+            nombre.contains("polera", ignoreCase = true) -> R.drawable.polera_gamer
+            else -> R.drawable.ic_launcher_background
+        }
     }
 }

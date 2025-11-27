@@ -23,6 +23,9 @@ import androidx.navigation.NavController
 import com.example.levelupgamer.util.toClp
 import com.example.levelupgamer.viewmodel.CarritoViewModel
 import com.example.levelupgamer.viewmodel.UserViewModel
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -196,6 +199,15 @@ fun CarritoScreen(navController: NavController, userViewModel: UserViewModel) {
                             modifier = Modifier.padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Image(
+                                painter = painterResource(id = carritoItem.imageResId),
+                                contentDescription = carritoItem.nombre,
+                                modifier = Modifier
+                                    .size(70.dp)
+                                    .padding(end = 12.dp),
+                                contentScale = ContentScale.Crop
+                            )
+
                             Column(
                                 modifier = Modifier.weight(1f)
                             ) {

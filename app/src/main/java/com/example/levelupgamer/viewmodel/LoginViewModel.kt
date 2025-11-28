@@ -30,8 +30,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     fun onPasswordChange(newPassword: String) {
         _uiState.value = _uiState.value.copy(password = newPassword, error = null)
     }
-
-    fun submit(onSuccess: () -> Unit) {
+    fun submit(onSuccess: (String, String) -> Unit) {
         val state = _uiState.value
 
         if (state.username.isBlank() || state.password.isBlank()) {
@@ -48,7 +47,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             if (loginSuccess) {
                 _uiState.value = state.copy(isLoading = false, error = null)
                 _userEmail.value = state.username
-                onSuccess()
+                onSuccess(state.username, state.password)
             } else {
                 _uiState.value = state.copy(isLoading = false, error = "Credenciales incorrectas")
             }

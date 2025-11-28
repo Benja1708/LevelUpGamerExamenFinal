@@ -42,9 +42,13 @@ fun LoginScreen(
     val neonGreen = Color(0xFF39FF14)
     val darkGray = Color(0xFF1F1F1F)
     val lightGray = Color(0xFFD3D3D3)
-    val onSubmitSuccess = {
-        navController.navigate("home") {
-            popUpTo("login") { inclusive = true }
+    val onSubmitSuccess = { email: String, password: String ->
+        userViewModel.loginByEmail(email, password) { isUserLoaded ->
+            if (isUserLoaded) {
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
+                }
+            }
         }
     }
 

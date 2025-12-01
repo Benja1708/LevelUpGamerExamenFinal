@@ -123,9 +123,27 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            DestacadoCard("Catan", "$29.990", modifier = Modifier.weight(1f))
-            DestacadoCard("Control Xbox", "$59.990", modifier = Modifier.weight(1f))
-            DestacadoCard("PC Gamer", "$1.299.990", modifier = Modifier.weight(1f))
+            DestacadoCard(
+                titulo = "Catan",
+                precio = "$29.990",
+                imagenResId = R.drawable.catan,
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("productoDetalle/1") }
+            )
+            DestacadoCard(
+                titulo = "Control Xbox",
+                precio = "$59.990",
+                imagenResId = R.drawable.control_xbox,
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("productoDetalle/2") }
+            )
+            DestacadoCard(
+                titulo = "PC Gamer",
+                precio = "$1.299.990",
+                imagenResId = R.drawable.pc_gamer_asus,
+                modifier = Modifier.weight(1f),
+                onClick = { navController.navigate("productoDetalle/3") }
+            )
         }
     }
 }
@@ -154,11 +172,14 @@ private fun QuickActionButton(text: String, onClick: () -> Unit) {
 private fun DestacadoCard(
     titulo: String,
     precio: String,
-    modifier: Modifier = Modifier
+    imagenResId: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier
-            .height(110.dp),
+            .height(140.dp)
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF1E1E1E)
         ),
@@ -168,8 +189,19 @@ private fun DestacadoCard(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(10.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            if (imagenResId != 0) {
+                Image(
+                    painter = painterResource(id = imagenResId),
+                    contentDescription = titulo,
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(bottom = 4.dp)
+                )
+            }
+
             Text(titulo, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
             Text(precio, color = Color(0xFF39FF14), fontSize = 13.sp)
             Text("Ver más", color = Color.Gray, fontSize = 11.sp)

@@ -67,7 +67,6 @@ class ProductoDaoTest {
 
         dao.insert(producto)
 
-        // Obtener el producto con ID real asignado por Room
         val inserted = dao.getAllProductosOnce().first()
 
         val updated = inserted.copy(
@@ -96,7 +95,6 @@ class ProductoDaoTest {
 
         dao.insert(producto)
 
-        // Obtener el producto ya insertado con ID REAL
         val inserted = dao.getAllProductosOnce().first()
 
         dao.delete(inserted)

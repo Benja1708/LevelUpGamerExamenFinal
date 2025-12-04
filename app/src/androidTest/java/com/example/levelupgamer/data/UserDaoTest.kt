@@ -23,7 +23,7 @@ class UserDaoTest {
             ApplicationProvider.getApplicationContext(),
             AppDatabase::class.java
         )
-            .allowMainThreadQueries() // OK para pruebas
+            .allowMainThreadQueries()
             .build()
 
         userDao = db.userDao()

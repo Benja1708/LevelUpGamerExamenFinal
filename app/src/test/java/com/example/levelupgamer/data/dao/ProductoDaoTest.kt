@@ -3,7 +3,6 @@ package com.example.levelupgamer.data.dao
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-// ELIMINA ESTA LÍNEA o se ocultará la de Robolectric
 // import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.levelupgamer.data.ProductoDatabase
 import com.example.levelupgamer.data.model.Producto
@@ -20,14 +19,11 @@ import java.io.IOException
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-// Nota: La anotación @RunWith(AndroidJUnit4::class) indica que se debe usar el
-// ejecutor de pruebas de AndroidX. Asegúrate de tener las dependencias necesarias.
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProductoDaoTest {
 
-    // Regla para ejecutar tareas en el hilo principal de forma síncrona
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -36,12 +32,10 @@ class ProductoDaoTest {
 
     @Before
     fun createDb() {
-        // Crea una base de datos en memoria para el test
         db = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
             ProductoDatabase::class.java
         )
-            // Permite consultas en el hilo principal para simplicidad en tests síncronos
             .allowMainThreadQueries()
             .build()
         productoDao = db.productoDao()
@@ -58,7 +52,6 @@ class ProductoDaoTest {
         val producto = Producto(nombre = "Test Producto", descripcion = "Desc", precio = 100.0)
         productoDao.insert(producto)
 
-        // Obtenemos el primer valor del Flow y lo verificamos
         val allProductos = productoDao.getAllProductos().first()
 
         assertEquals(1, allProductos.size)
@@ -67,15 +60,12 @@ class ProductoDaoTest {
 
     @Test
     fun insertOnConflictReplacesExisting() = runTest {
-        // Producto original con ID 1 (asumimos que la base de datos es nueva)
         val original = Producto(id = 1, nombre = "Original", descripcion = "Desc", precio = 100.0)
         productoDao.insert(original)
 
-        // Producto actualizado con el mismo ID
         val updated = Producto(id = 1, nombre = "Reemplazado", descripcion = "Nueva Desc", precio = 200.0)
         productoDao.insert(updated)
 
-        // Verificamos que el producto se reemplazó
         val retrieved = productoDao.getProductoById(1).first()
 
         assertEquals("Reemplazado", retrieved.nombre)
@@ -88,9 +78,7 @@ class ProductoDaoTest {
         productoDao.insert(producto)
 
         val initialList = productoDao.getAllProductosOnce()
-        val id = initialList.first().id // Obtenemos el ID asignado automáticamente
-
-        // Creamos una copia para actualizar
+        val id = initialList.first().id
         val updatedProducto = initialList.first().copy(nombre = "Nuevo Nombre", precio = 150.0)
         productoDao.update(updatedProducto)
 

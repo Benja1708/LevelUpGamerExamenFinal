@@ -38,6 +38,16 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        // Esto le dice a Gradle que incluya los recursos y assets de Android
+        // al ejecutar pruebas unitarias locales (src/test).
+        unitTests.isIncludeAndroidResources = true
+
+        // Esto es opcional, pero ayuda a manejar mocks de algunas APIs de Android
+        unitTests.isReturnDefaultValues = true
+    }
+
 }
 
 dependencies {
@@ -56,6 +66,22 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
+    testImplementation("junit:junit:4.13.2")
+    val coroutinesVersion = "1.7.3"
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
+    val archVersion = "2.2.0"
+    testImplementation("androidx.arch.core:core-testing:$archVersion")
+    val roomVersion = "2.6.1"
+    testImplementation("androidx.room:room-testing:$roomVersion")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    val mockkVersion = "1.13.8"
+    testImplementation("io.mockk:mockk:$mockkVersion")
+    val robolectricVersion = "4.12.1" // Puedes usar una versión reciente
+    testImplementation("org.robolectric:robolectric:$robolectricVersion")
+
+    testImplementation("androidx.room:room-testing:2.6.1")
+    testImplementation("com.google.truth:truth:1.1.3")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -63,6 +89,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation("androidx.room:room-testing:2.6.1")
+    androidTestImplementation("com.google.truth:truth:1.1.3")
+    androidTestImplementation("app.cash.turbine:turbine:1.0.0")
+
+
 
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")

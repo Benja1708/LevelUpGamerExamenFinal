@@ -2,7 +2,9 @@ package com.example.levelupgamer.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 @Entity(tableName = "producto")
 data class Producto(
     @PrimaryKey(autoGenerate = true)

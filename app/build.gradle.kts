@@ -40,11 +40,8 @@ android {
     }
 
     testOptions {
-        // Esto le dice a Gradle que incluya los recursos y assets de Android
-        // al ejecutar pruebas unitarias locales (src/test).
         unitTests.isIncludeAndroidResources = true
 
-        // Esto es opcional, pero ayuda a manejar mocks de algunas APIs de Android
         unitTests.isReturnDefaultValues = true
     }
 
@@ -76,7 +73,7 @@ dependencies {
     testImplementation("androidx.test.ext:junit:1.1.5")
     val mockkVersion = "1.13.8"
     testImplementation("io.mockk:mockk:$mockkVersion")
-    val robolectricVersion = "4.12.1" // Puedes usar una versión reciente
+    val robolectricVersion = "4.12.1"
     testImplementation("org.robolectric:robolectric:$robolectricVersion")
 
     testImplementation("androidx.room:room-testing:2.6.1")
@@ -105,4 +102,12 @@ dependencies {
     implementation("com.google.zxing:core:3.5.1")
     implementation("androidx.compose.material:material-icons-extended:1.7.4")
     implementation("androidx.compose.material:material-icons-extended")
+
+    val retrofitVersion = "2.9.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    val moshiVersion = "1.15.0"
+    implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }

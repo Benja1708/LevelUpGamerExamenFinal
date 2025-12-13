@@ -1,14 +1,12 @@
 # 📱 Nombre de la App
 
-> Breve descripción de la aplicación y su propósito principal.
+> LevelUp-Gamer.
 
 ---
 
 ## 👥 Integrantes del Equipo
 
-* Nombre Apellido – Rol (ej: Frontend / Backend / Documentación)
-* Nombre Apellido – Rol
-* Nombre Apellido – Rol
+* Benjamin Bastias
 
 ---
 
@@ -19,8 +17,6 @@
 * Consumo de API externa.
 * Validaciones visuales y lógicas en formularios.
 * Navegación entre pantallas.
-
-*(Ajustar según lo que realmente hace la app)*
 
 ---
 
@@ -43,7 +39,7 @@
 1. Clonar el repositorio:
 
    ```bash
-   git clone https://github.com/usuario/repositorio.git
+   https://github.com/Benja1708/LevelUpGamerExamenFinal.git
    ```
 2. Abrir el proyecto en **Android Studio**.
 3. Sincronizar Gradle.
@@ -66,8 +62,6 @@
 
 * **Nombre del archivo:** nombre-keystore.jks
 * **Ubicación:** `/keystore/nombre-keystore.jks`
-
-> ⚠️ Nota: Las credenciales del keystore no se suben al repositorio por seguridad.
 
 ---
 
@@ -94,8 +88,5 @@ El trabajo colaborativo se evidencia mediante el historial de commits en GitHub.
 
 ---
 
-## 📌 Observaciones
-
-Proyecto desarrollado con fines académicos para la asignatura __________.
 
 
